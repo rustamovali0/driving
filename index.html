@@ -8,6 +8,11 @@
 @media(max-width:1050px){.shell{grid-template-columns:205px minmax(0,1fr)}.quickgrid{grid-template-columns:repeat(2,1fr)}.stats{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:750px){.shell{display:block}.side{height:auto;position:static;display:block;padding:13px 14px;border-right:0;border-bottom:1px solid var(--border)}.side .nav,.side .asideNote{display:none}.brand{padding:0}.main{padding:16px 14px 100px}.top{margin-bottom:18px}.top .text{display:none}.hero{padding:22px}.heroIllus{display:none}.quickgrid,.ticketGrid{grid-template-columns:1fr}.quick{min-height:auto}.qcard{padding:18px}.mobileNav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:100;background:white;border-top:1px solid var(--border);justify-content:space-around;padding:7px 4px max(7px,env(safe-area-inset-bottom))}.mobileNav button{border:0;background:transparent;color:#66788b;display:flex;flex-direction:column;gap:2px;align-items:center;font-size:10px;padding:5px 2px;min-width:57px}.mobileNav button b{font-size:22px}.mobileNav button.active{color:var(--brand)}.top-actions .btn{font-size:12px;padding:8px}.stats{grid-template-columns:repeat(2,1fr)}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}}
+
+/* Sabit ölçülü sual sahəsi və düymələr */
+.player{max-width:900px}.qcard{min-height:570px;display:flex;flex-direction:column}.qcard .actions{margin-top:auto;padding-top:22px}.qtitle{min-height:72px}.option{min-height:65px}.actions>.btn,.actions .right>.btn{min-width:145px}.player .bar{margin-bottom:18px}
+.option.keyboard-target{outline:3px solid #f5b74f;outline-offset:1px;background:#fff9eb}
+@media(max-width:750px){.qcard{min-height:540px}.qtitle{min-height:0}.actions>.btn,.actions .right>.btn{min-width:110px}}
 </style></head>
 <body><div class="shell"><aside class="side"><div class="brand"><div class="brandmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="18" fill="#123b73"/><path d="M15 47Q13 17 34 17h7Q52 17 51 46" fill="none" stroke="#ffffff" stroke-width="8" stroke-linecap="round"/><path d="M35 29v8" stroke="#50e4c2" stroke-width="5" stroke-linecap="round"/><path d="M35 46v4" stroke="#50e4c2" stroke-width="5" stroke-linecap="round"/></svg></div><div><strong>BC Akademiya</strong><span>B + C • Sürücülük hazırlığı</span></div></div><nav class="nav" id="nav"></nav><div class="asideNote"><b>🔒 Şəxsi yaddaş</b><div>Cavabların, səhvlərin və biletlərin nəticələri yalnız bu brauzerdə saxlanır.</div></div></aside>
 <main class="main"><header class="top"><span class="text" id="saved">● Yerli yaddaş aktivdir</span><div class="top-actions"><button class="btn alt sm" data-action="export">↓ Yaddaşı saxla</button><button class="btn alt sm" data-action="import">↑ Bərpa et</button></div></header><div id="screen"></div><footer class="footer">Bu platforma müstəqil hazırlıq vasitəsidir. Suallar rəsmi DYP imtahan biletlərinin surəti deyil. Normativ məlumatları qüvvədə olan qanunvericiliklə yoxla.</footer></main></div>
@@ -96,7 +101,7 @@ let from=a.source==='wrong'?'Səhvlərim':a.source==='hard'?'Ən çətin suallar
 $('screen').innerHTML=`<div class="player"><div class="breadcrumbs"><button data-action="exitPlayer">← ${a.mode==='exam'?'Biletlərə qayıt':esc(from)}</button><span>/</span><span>${esc(a.title)}</span></div><div class="progresshead"><div><div class="eyebrow">${isTrain?'SƏRBƏST MƏŞQ':'İMTAHAN BİLETİ'}</div><h2>${esc(a.title)}</h2></div>${clock}</div><div class="row between"><span class="muted small">Sual ${a.index+1}/${a.ids.length}</span><span class="muted small">${count} cavablandırılıb</span></div><div class="bar"><div style="width:${Math.round((a.index+1)/a.ids.length*100)}%"></div></div>${locked?`<div class="panel stack" style="border-color:#efbdc5;margin-bottom:17px"><h2>⏱ 15 dəqiqə bitdi</h2><p class="muted">İstəsən əlavə vaxt götürüb 00:00-dan başlayan sayğacla davam et. Əlavə vaxtdakı nəticə məşq sayılır.</p><div class="row"><button class="btn" data-action="continueExtra">Davam et — 00:00-dan</button><button class="btn alt" data-action="submitExam">İmtahanı bitir</button></div></div>`:''}<div class="qcard"><div class="row">${meta}</div><div class="qtitle">${esc(q.q)}</div>${q.diagram?diagram(q.diagram):''}<div class="options">${opts}</div>${feedback}<div class="actions"><button class="btn alt" data-action="previous" ${a.index===0?'disabled':''}>← Əvvəlki</button><div class="right">${a.index<a.ids.length-1?`<button class="btn" data-action="next">Növbəti →</button>`:isTrain?`<button class="btn" data-action="finishTrain">Məşqi bitir ✓</button>`:`<button class="btn" data-action="submitExam">Cavabları yoxla ✓</button>`}</div></div></div>${!isTrain?`<div class="row between" style="margin-top:14px"><span class="note">İmtahanda düzgün cavablar yalnız təqdim etdikdən sonra açılacaq.</span><button class="btn soft sm" data-action="submitExam">Təqdim et</button></div>`:`<p class="note" style="margin-top:13px">Seçdiyin hər cavab dərhal yadda saxlanılır və izah göstərilir. “Növbəti” növbəti suala keçir.</p>`}</div>`;if($('clock'))updateClock()}
 function updateClock(){if(!active||active.mode!=='exam')return;let a=active,c=$('clock');if(a.status==='active'){let remain=900-Math.floor((Date.now()-a.started)/1000);if(remain<=0){a.status='expired';DB.current=a;save();renderPlayer();return}if(c){c.textContent=duration(remain);c.classList.toggle('red',remain<60)}}else if(a.status==='overtime'&&c)c.textContent='+'+duration(getExtra(a))}
 function answer(index){let a=active;if(!a||a.status==='expired')return;let q=QMAP[a.ids[a.index]],id=q.id;if(a.mode==='train'&&a.ans[id]!==undefined)return;a.ans[id]=index;if(a.mode==='train'){DB.logs.push({id,choice:index,correct:index===q.a,when:Date.now()});DB.logs=DB.logs.slice(-16000);save()}else{DB.current=a;save()}renderPlayer()}
-function move(dir){if(!active)return;let n=active.index+dir;if(n<0||n>=active.ids.length)return;active.index=n;if(active.mode==='exam'){DB.current=active;save()}renderPlayer();window.scrollTo({top:0,behavior:'instant'})}
+function move(dir){if(!active)return;let n=active.index+dir;if(n<0||n>=active.ids.length)return;active.index=n;if(active.mode==='exam'){DB.current=active;save()}renderPlayer();requestAnimationFrame(()=>{const el=document.querySelector('.player');if(el)el.scrollIntoView({block:'start',behavior:'instant'});})}
 function continueExtra(){if(!active||active.mode!=='exam'||active.status!=='expired')return;active.status='overtime';active.extraStart=Date.now();DB.current=active;save();renderPlayer()}
 function finishTrain(){if(!active||active.mode!=='train')return;let a=active,results=a.ids.map(id=>({id,choice:a.ans[id]??null,correct:a.ans[id]===QMAP[id].a}));let date=Date.now(),score=results.filter(x=>x.correct).length,rec={id:'p'+date,mode:'train',title:a.title,size:a.ids.length,score,wrong:a.ids.length-score,date,answers:results,pass:score===a.ids.length};DB.history.unshift(rec);DB.history=DB.history.slice(0,400);active=null;shownResult=rec;save();renderResult();window.scrollTo(0,0)}
 function submitExam(){if(!active||active.mode!=='exam')return;const a=active;let answers=a.ids.map(id=>({id,choice:a.ans[id]??null,correct:a.ans[id]===QMAP[id].a}));let score=answers.filter(x=>x.correct).length,extra=getExtra(a),elapsed=Math.floor((Date.now()-a.started)/1000),expired=(a.status==='expired'||a.status==='overtime'||elapsed>900);let rec={id:'e'+Date.now(),ticket:a.ticket,mode:'exam',title:a.title,size:10,score,wrong:10-score,date:Date.now(),pass:score>=9&&!expired,expired,extra,seconds:expired?900+extra:elapsed,answers};DB.history.unshift(rec);DB.history=DB.history.slice(0,400);DB.tickets[a.ticket]={date:rec.date,score,wrong:10-score,expired,historyId:rec.id};DB.logs.push(...answers.filter(x=>x.choice!==null).map(x=>({id:x.id,choice:x.choice,correct:x.correct,when:rec.date})));DB.logs=DB.logs.slice(-16000);DB.current=null;active=null;shownResult=rec;save();renderResult();window.scrollTo(0,0)}
@@ -108,5 +113,36 @@ function doImport(file){if(!file)return;let reader=new FileReader();reader.onloa
 const acts={startMixed:()=>{page='practice';nav();startPractice(shuffle(BANK.map(x=>x.id)),'Ümumi qarışıq suallar')},startFive:()=>{page='practice';nav();startPractice(shuffle(BANK.map(x=>x.id)).slice(0,5),'5 suallıq qısa məşq','short')},startFiltered:()=>startPractice(shuffle(filteredPractice().map(q=>q.id)),'Mövzu və səviyyə məşqi'),startHard:()=>{page='hard';nav();startPractice(BANK.filter(x=>x.level==='en-cetin'||x.hard).map(q=>q.id),'Ən çətin suallar','hard')},retryAll:()=>startMistakes(wrongIDs()),retryCat:el=>startMistakes(wrongIDs().filter(id=>QMAP[id].cat===el.dataset.cat)),retryOne:el=>{let id=el.dataset.id;if(!QMAP[id])return;let ids=wrongIDs();if(!ids.includes(id))ids=[id,...ids];startMistakes(ids,ids.indexOf(id))},ticketStart:el=>newExam(el.dataset.ticket),reviewTicket:el=>{let id=DB.tickets[el.dataset.ticket]?.historyId;if(id)openHistory(id)},resume:resumed,previous:()=>move(-1),next:()=>move(1),continueExtra,finishTrain,submitExam,exitPlayer:()=>go(active?.mode==='exam'?'tickets':active?.source==='wrong'?'mistakes':active?.source==='hard'?'hard':'practice'),retryResult:()=>{if(shownResult)startMistakes(shownResult.answers.filter(x=>!x.correct).map(x=>x.id))},openHistory:el=>openHistory(el.dataset.history),export:doExport,import:()=>$('restore').click()};
 document.body.addEventListener('click',e=>{const el=e.target.closest('button');if(!el||el.disabled)return;if(el.dataset.answer!==undefined){answer(Number(el.dataset.answer));return}if(el.dataset.nav){go(el.dataset.nav);return}if(el.dataset.level){practiceLevel=el.dataset.level;practice();return}if(el.dataset.action&&acts[el.dataset.action]){acts[el.dataset.action](el);return}});
 document.body.addEventListener('change',e=>{if(e.target.id==='catSelect'){practiceCat=e.target.value;practice()}if(e.target.id==='restore'){doImport(e.target.files?.[0]);e.target.value=''}});
+
+// Klaviatura: oxlar cavabları seçir, Enter birinci basmada təsdiq,
+// ikinci basmada növbəti suala keçir. Cavab seçilməyibsə Enter ötürür.
+let keyboardChoice=null;
+function markKeyboardChoice(){document.querySelectorAll('.option').forEach((el,i)=>el.classList.toggle('keyboard-target',i===keyboardChoice));}
+const originalMove=move;
+move=function(delta){keyboardChoice=null;originalMove(delta);};
+document.addEventListener('keydown',function(e){
+ if(!active||shownResult||e.altKey||e.ctrlKey||e.metaKey)return;
+ const t=e.target;
+ if(t&&(/INPUT|TEXTAREA|SELECT/.test(t.tagName)||t.isContentEditable))return;
+ const q=QMAP[active.ids[active.index]];if(!q)return;
+ if(['ArrowDown','ArrowUp','ArrowLeft','ArrowRight'].includes(e.key)){
+  e.preventDefault();const step=(e.key==='ArrowDown'||e.key==='ArrowRight')?1:-1;
+  keyboardChoice=keyboardChoice===null?(step===1?0:q.opts.length-1):(keyboardChoice+step+q.opts.length)%q.opts.length;
+  markKeyboardChoice();return;
+ }
+ if(e.key==='Enter'){
+  if(t&&t.tagName==='BUTTON'&&t.dataset.answer===undefined&&t.dataset.action!==undefined)return;
+  e.preventDefault();
+  const id=q.id,answered=active.ans[id]!==undefined;
+  if(!answered&&keyboardChoice!==null&&active.status!=='expired'){
+   answer(keyboardChoice);keyboardChoice=null;return;
+  }
+  keyboardChoice=null;
+  if(active.index<active.ids.length-1)move(1);
+  else if(active.mode==='train')finishTrain();
+  else submitExam();
+ }
+});
+
 setInterval(updateClock,500);nav();render();
 </script></body></html>
